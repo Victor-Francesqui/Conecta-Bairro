@@ -1,0 +1,1734 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Conecta Bairro</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #f8fafc;
+    }
+
+    .card-hover {
+      transition: all 0.3s ease;
+    }
+
+    .card-hover:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-primary {
+      background-color: #3b82f6;
+      transition: all 0.3s ease;
+    }
+
+    .btn-primary:hover {
+      background-color: #2563eb;
+      transform: translateY(-2px);
+    }
+
+    .btn-success {
+      background-color: #10b981;
+      transition: all 0.3s ease;
+    }
+
+    .btn-success:hover {
+      background-color: #059669;
+      transform: translateY(-2px);
+    }
+
+    .btn-danger {
+      background-color: #ef4444;
+      transition: all 0.3s ease;
+    }
+
+    .btn-danger:hover {
+      background-color: #dc2626;
+      transform: translateY(-2px);
+    }
+
+    .navbar-brand {
+      font-weight: 700;
+      background: linear-gradient(to right, #3b82f6, #2563eb);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .modal-transition {
+      transition: all 0.3s ease;
+    }
+
+    .modal-content {
+      transform: translateY(-20px);
+      opacity: 0;
+      transition: all 0.3s ease;
+    }
+
+    .modal.show .modal-content {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    .floating-btn {
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .floating-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    .fade-in {
+      animation: fadeIn 0.5s ease forwards;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 0.3em 0.6em;
+      font-size: 0.75em;
+      font-weight: 600;
+      border-radius: 9999px;
+    }
+
+    .modal-transition {
+      transition: all 0.3s ease;
+    }
+
+    .modal-transition.show .modal-content {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    .modal-content {
+      transform: translateY(-20px);
+      opacity: 0;
+      transition: all 0.3s ease;
+    }
+  </style>
+</head>
+
+<body class="bg-gray-50 min-h-screen font-sans text-gray-800">
+  <!-- Navbar -->
+  <nav class="bg-white shadow-md sticky top-0 z-40">
+    <div class="container mx-auto px-4 py-3">
+      <div class="flex justify-between items-center">
+        <div class="flex items-center space-x-2">
+          <i class="fas fa-handshake text-blue-600 text-2xl"></i>
+          <h1 class="text-2xl navbar-brand">Conecta Bairro</h1>
+        </div>
+        <div class="hidden md:flex items-center">
+          <span id="headerUsuario" class="text-gray-700 mr-4 font-medium"></span>
+          <div class="space-x-3">
+            <button id="btnLogin"
+              class="btn-primary px-5 py-2 rounded-lg text-white font-medium shadow-md hover:shadow-lg">
+              <i class="fas fa-sign-in-alt mr-2"></i>Login
+            </button>
+            <button id="btnCadastro"
+              class="btn-success px-5 py-2 rounded-lg text-white font-medium shadow-md hover:shadow-lg">
+              <i class="fas fa-user-plus mr-2"></i>Cadastrar
+            </button>
+            <button id="btnLogout"
+              class="btn-danger px-5 py-2 rounded-lg text-white font-medium shadow-md hover:shadow-lg hidden">
+              <i class="fas fa-sign-out-alt mr-2"></i>Logout
+            </button>
+          </div>
+        </div>
+        <div class="md:hidden">
+          <button id="menuToggle" class="text-gray-700">
+            <i class="fas fa-bars text-xl"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Mobile menu -->
+      <div id="mobileMenu" class="hidden md:hidden mt-4 py-3 border-t">
+        <div class="flex flex-col space-y-3">
+          <span id="headerUsuarioMobile" class="text-gray-700 font-medium text-center"></span>
+          <button id="btnLoginMobile" class="btn-primary px-4 py-2 rounded-lg text-white font-medium shadow">
+            <i class="fas fa-sign-in-alt mr-2"></i>Login
+          </button>
+          <button id="btnCadastroMobile" class="btn-success px-4 py-2 rounded-lg text-white font-medium shadow">
+            <i class="fas fa-user-plus mr-2"></i>Cadastrar
+          </button>
+          <button id="btnLogoutMobile" class="btn-danger px-4 py-2 rounded-lg text-white font-medium shadow hidden">
+            <i class="fas fa-sign-out-alt mr-2"></i>Logout
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="bg-gradient-to-r from-blue-500 to-blue-700 text-white pt-12 pb-24">
+    <div class="container mx-auto px-4">
+      <div class="flex flex-col md:flex-row items-center justify-between">
+        <div class="md:w-1/2 mb-8 md:mb-0">
+          <h2 class="text-3xl md:text-4xl font-bold mb-4">Encontre os melhores serviços no seu bairro</h2>
+          <p class="text-lg mb-6 text-blue-100">Conectando profissionais e clientes para criar oportunidades na sua
+            comunidade.</p>
+          <div class="flex space-x-4">
+            <button id="btnBuscarServicos"
+              class="bg-white text-blue-700 px-6 py-3 rounded-lg font-medium shadow-md hover:shadow-lg transition duration-300">
+              <i class="fas fa-search mr-2"></i>Buscar Serviços
+            </button>
+            <button id="btnOferecer"
+              class="bg-blue-800 text-white px-6 py-3 rounded-lg font-medium shadow-md hover:shadow-lg hover:bg-blue-900 transition duration-300">
+              <i class="fas fa-briefcase mr-2"></i>Oferecer Serviços
+            </button>
+          </div>
+        </div>
+        <div class="md:w-1/2 flex justify-center">
+          <img src="imgs/img-centro.png" alt="Hero image" class="rounded-lg" />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Filtros - Posicionado por cima da seção hero -->
+  <div class="container mx-auto px-4 -mt-24 relative z-10">
+    <div class="bg-white rounded-lg shadow-lg p-6">
+      <h3 class="text-lg font-semibold mb-4 text-gray-700">Filtrar Anúncios</h3>
+      <div class="flex flex-col md:flex-row gap-4">
+        <div class="md:w-1/4">
+          <label for="filtroBairro" class="block text-sm font-medium text-gray-700 mb-1">Bairro</label>
+          <select id="filtroBairro"
+            class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+            <option value="">Todos os Bairros</option>
+          </select>
+        </div>
+        <div class="md:w-1/4">
+          <label for="filtroCategoria" class="block text-sm font-medium text-gray-700 mb-1">Categoria</label>
+          <select id="filtroCategoria"
+            class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+            <option value="">Todas as Categorias</option>
+          </select>
+        </div>
+        <div class="md:w-1/3">
+          <label for="filtroBusca" class="block text-sm font-medium text-gray-700 mb-1">Buscar</label>
+          <div class="relative">
+            <input id="filtroBusca" type="text" placeholder="Buscar por palavra-chave"
+              class="w-full border border-gray-300 rounded-lg pl-10 pr-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <i class="fas fa-search text-gray-400"></i>
+            </div>
+          </div>
+        </div>
+        <div class="md:w-1/6 flex items-end">
+          <button id="btnFiltrar"
+            class="w-full btn-primary px-4 py-2 rounded-lg text-white font-medium shadow hover:shadow-lg">
+            <i class="fas fa-filter mr-2"></i>Filtrar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Seção de Categorias Populares -->
+  <section class="container mx-auto px-4 mt-12 mb-8">
+    <h2 class="text-2xl font-bold mb-6 text-center">Categorias Populares</h2>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div class="bg-white rounded-lg shadow p-4 text-center card-hover cursor-pointer category-card"
+        data-category="limpeza">
+        <div class="bg-blue-100 w-16 h-16 mx-auto rounded-full flex items-center justify-center mb-3">
+          <i class="fas fa-broom text-blue-600 text-2xl"></i>
+        </div>
+        <h3 class="font-medium">Limpeza</h3>
+      </div>
+      <div class="bg-white rounded-lg shadow p-4 text-center card-hover cursor-pointer category-card"
+        data-category="construção">
+        <div class="bg-blue-100 w-16 h-16 mx-auto rounded-full flex items-center justify-center mb-3">
+          <i class="fas fa-hard-hat text-blue-600 text-2xl"></i>
+        </div>
+        <h3 class="font-medium">Construção</h3>
+      </div>
+      <div class="bg-white rounded-lg shadow p-4 text-center card-hover cursor-pointer category-card"
+        data-category="design">
+        <div class="bg-blue-100 w-16 h-16 mx-auto rounded-full flex items-center justify-center mb-3">
+          <i class="fas fa-paint-brush text-blue-600 text-2xl"></i>
+        </div>
+        <h3 class="font-medium">Design</h3>
+      </div>
+      <div class="bg-white rounded-lg shadow p-4 text-center card-hover cursor-pointer category-card"
+        data-category="tecnologia">
+        <div class="bg-blue-100 w-16 h-16 mx-auto rounded-full flex items-center justify-center mb-3">
+          <i class="fas fa-laptop-code text-blue-600 text-2xl"></i>
+        </div>
+        <h3 class="font-medium">Tecnologia</h3>
+      </div>
+    </div>
+  </section>
+
+  <!-- Seção de Anúncios -->
+  <section class="container mx-auto px-4 mt-8 mb-12">
+    <div class="flex justify-between items-center mb-6">
+      <h2 class="text-2xl font-bold">Anúncios disponíveis</h2>
+      <div id="anunciosCount" class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full font-medium"></div>
+    </div>
+    <main id="anunciosContainer" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"></main>
+  </section>
+
+  <!-- Botões flutuantes -->
+  <div class="fixed bottom-6 right-6 flex flex-col gap-3 z-30">
+    <button id="btnNovoAnuncio"
+      class="floating-btn bg-green-500 text-white h-14 w-14 rounded-full shadow-lg hover:shadow-xl flex items-center justify-center text-xl hidden">
+      <i class="fas fa-plus"></i>
+    </button>
+    <button id="btnExcluirAnuncio"
+      class="floating-btn bg-red-500 text-white h-14 w-14 rounded-full shadow-lg hover:shadow-xl flex items-center justify-center text-xl hidden">
+      <i class="fas fa-trash-alt"></i>
+    </button>
+  </div>
+
+  <!-- Modal Detalhes -->
+  <div id="modalDetalhes"
+    class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50 modal-transition">
+    <div class="bg-white rounded-xl shadow-xl max-w-3xl w-full mx-4 modal-content">
+      <div class="relative">
+        <div id="modalImageSlider" class="relative overflow-hidden rounded-t-xl">
+          <div id="modalImagens" class="flex transition-transform duration-300 ease-in-out"></div>
+          <button id="prevImage"
+            class="absolute left-2 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-70 p-2 rounded-full shadow text-gray-800 hover:bg-opacity-100">
+            <i class="fas fa-chevron-left"></i>
+          </button>
+          <button id="nextImage"
+            class="absolute right-2 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-70 p-2 rounded-full shadow text-gray-800 hover:bg-opacity-100">
+            <i class="fas fa-chevron-right"></i>
+          </button>
+        </div>
+        <button id="fecharModal"
+          class="absolute top-4 right-4 bg-white rounded-full w-8 h-8 flex items-center justify-center text-gray-600 hover:text-gray-800 hover:bg-gray-100">&times;</button>
+      </div>
+      <div class="p-6">
+        <div class="flex justify-between items-start mb-4">
+          <div>
+            <h2 id="modalTitulo" class="text-2xl font-bold"></h2>
+            <div class="flex gap-2 mt-2">
+              <span id="modalBairro" class="badge bg-blue-100 text-blue-700"></span>
+              <span id="modalCategoria" class="badge bg-green-100 text-green-700"></span>
+            </div>
+          </div>
+          <div id="modalRating" class="flex items-center text-yellow-500">
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star-half-alt"></i>
+            <span class="text-gray-600 ml-1">4.5</span>
+          </div>
+        </div>
+        <div class="border-t border-b py-4 my-4">
+          <h3 class="font-semibold text-gray-800 mb-2">Descrição</h3>
+          <p id="modalDescricao" class="text-gray-600 leading-relaxed"></p>
+        </div>
+        <div class="mt-4">
+          <h3 class="font-semibold text-gray-800 mb-2">Informações de Contato</h3>
+          <div id="modalContato" class="flex items-center text-gray-600">
+            <i class="fas fa-phone-alt mr-2 text-blue-500"></i>
+            <span></span>
+          </div>
+        </div>
+        <div class="flex gap-3 mt-6">
+          <button id="btnEditarAnuncio"
+            class="hidden bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition shadow-md hover:shadow-lg">
+            <i class="fas fa-edit mr-2"></i>Editar
+          </button>
+          <button id="btnExcluirAnuncioDetalhes"
+            class="hidden bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition shadow-md hover:shadow-lg">
+            <i class="fas fa-trash-alt mr-2"></i>Excluir
+          </button>
+          <button id="btnContatarVendedor"
+            class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg transition shadow-md hover:shadow-lg">
+            <i class="fas fa-envelope mr-2"></i>Contatar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Cadastro/Login -->
+  <div id="modalCadastroLogin"
+    class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50 modal-transition">
+    <div class="bg-white rounded-xl shadow-xl w-full max-w-md mx-4 modal-content">
+      <div class="p-6">
+        <div class="flex justify-between items-center mb-6">
+          <h2 id="tituloModalCadastroLogin" class="text-2xl font-bold"></h2>
+          <button id="fecharCadastroLogin"
+            class="bg-gray-200 rounded-full w-8 h-8 flex items-center justify-center text-gray-600 hover:bg-gray-300">&times;</button>
+        </div>
+
+        <form id="formCadastroLogin" class="flex flex-col gap-4">
+          <div class="form-group">
+            <label for="nome" class="block text-sm font-medium text-gray-700 mb-1">Nome</label>
+            <input id="nome" type="text" placeholder="Seu nome completo"
+              class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              required>
+          </div>
+
+          <div class="form-group">
+            <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+            <input id="email" type="email" placeholder="seu@email.com"
+              class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              required>
+          </div>
+
+          <div class="form-group">
+            <label for="telefone" class="block text-sm font-medium text-gray-700 mb-1">Telefone</label>
+            <input id="telefone" type="tel" placeholder="(00) 00000-0000"
+              class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              required>
+          </div>
+
+          <div class="form-group">
+            <label for="tipoUsuario" class="block text-sm font-medium text-gray-700 mb-1">Tipo de Usuário</label>
+            <select id="tipoUsuario"
+              class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+              <option value="empregador">Empregador</option>
+              <option value="empregado">Empregado</option>
+            </select>
+          </div>
+
+          <div id="camposExtras" class="flex flex-col gap-4"></div>
+
+          <div class="form-group">
+            <label for="senha" class="block text-sm font-medium text-gray-700 mb-1">Senha</label>
+            <div class="relative">
+              <input id="senha" type="password" placeholder="Sua senha"
+                class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                required>
+              <button type="button" id="toggleSenha"
+                class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500">
+                <i class="fas fa-eye"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="confirmarSenha" class="block text-sm font-medium text-gray-700 mb-1">Confirmar Senha</label>
+            <input id="confirmarSenha" type="password" placeholder="Confirme sua senha"
+              class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              required>
+          </div>
+
+          <button type="submit"
+            class="mt-2 bg-blue-600 text-white px-4 py-3 rounded-lg font-semibold hover:bg-blue-700 transition shadow-md hover:shadow-lg">
+            <i class="fas fa-check-circle mr-2"></i>Confirmar
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Novo Anúncio -->
+  <div id="modalNovoAnuncio"
+    class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50 modal-transition">
+    <div class="bg-white rounded-xl shadow-xl w-full max-w-lg mx-4 modal-content">
+      <div class="p-6">
+        <div class="flex justify-between items-center mb-6">
+          <h2 class="text-2xl font-bold">Novo Anúncio</h2>
+          <button id="fecharNovoAnuncio"
+            class="bg-gray-200 rounded-full w-8 h-8 flex items-center justify-center text-gray-600 hover:bg-gray-300">&times;</button>
+        </div>
+
+        <form id="formNovoAnuncio" class="flex flex-col gap-4">
+          <div class="form-group">
+            <label for="titulo" class="block text-sm font-medium text-gray-700 mb-1">Título</label>
+            <input id="titulo" type="text" placeholder="Título do anúncio"
+              class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              required>
+          </div>
+
+          <div class="form-group">
+            <label for="descricao" class="block text-sm font-medium text-gray-700 mb-1">Descrição</label>
+            <textarea id="descricao" placeholder="Descreva seu serviço ou produto..." rows="4"
+              class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              required></textarea>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="form-group">
+              <label for="bairro" class="block text-sm font-medium text-gray-700 mb-1">Bairro</label>
+              <input id="bairro" type="text" placeholder="Bairro"
+                class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                required>
+            </div>
+
+            <div class="form-group">
+              <label for="categoria" class="block text-sm font-medium text-gray-700 mb-1">Categoria</label>
+              <input id="categoria" type="text" placeholder="Categoria"
+                class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="contato" class="block text-sm font-medium text-gray-700 mb-1">Informações de Contato</label>
+            <input id="contato" type="text" placeholder="Telefone, email, etc."
+              class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              required>
+          </div>
+
+          <div class="form-group">
+            <label for="imagens" class="block text-sm font-medium text-gray-700 mb-1">Imagens</label>
+            <div
+              class="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center cursor-pointer hover:bg-gray-50"
+              id="dropArea">
+              <i class="fas fa-cloud-upload-alt text-gray-400 text-3xl mb-2"></i>
+              <p class="text-sm text-gray-500">Arraste imagens aqui ou clique para selecionar</p>
+              <input id="imagens" type="file" accept="image/*" multiple class="hidden">
+            </div>
+            <div id="previewImagens" class="flex flex-wrap gap-2 mt-3"></div>
+          </div>
+
+          <button type="submit"
+            class="mt-2 bg-green-500 text-white px-4 py-3 rounded-lg font-semibold hover:bg-green-600 transition shadow-md hover:shadow-lg">
+            <i class="fas fa-plus-circle mr-2"></i>Criar Anúncio
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="bg-gray-800 text-white py-8 mt-12">
+    <div class="container mx-auto px-4">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div>
+          <h3 class="text-xl font-bold mb-4">Conecta Bairro</h3>
+          <p class="text-gray-400">Conectando talentos e oportunidades no seu bairro.</p>
+          <div class="flex space-x-4 mt-4">
+            <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-facebook"></i></a>
+            <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-instagram"></i></a>
+            <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-twitter"></i></a>
+            <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-linkedin"></i></a>
+          </div>
+        </div>
+        <div>
+          <h3 class="text-lg font-bold mb-4">Links Úteis</h3>
+          <ul class="space-y-2">
+            <li><a href="#" class="text-gray-400 hover:text-white">Sobre Nós</a></li>
+            <li><a href="#" class="text-gray-400 hover:text-white">Termos de Uso</a></li>
+            <li><a href="#" class="text-gray-400 hover:text-white">Política de Privacidade</a></li>
+            <li><a href="#" class="text-gray-400 hover:text-white">Contato</a></li>
+          </ul>
+        </div>
+        <div>
+          <h3 class="text-lg font-bold mb-4">Contato</h3>
+          <p class="flex items-center text-gray-400 mb-2"><i class="fas fa-envelope mr-2"></i> contato@conectabairro.com
+          </p>
+          <p class="flex items-center text-gray-400 mb-2"><i class="fas fa-phone mr-2"></i> (11) 99999-9999</p>
+          <p class="flex items-center text-gray-400"><i class="fas fa-map-marker-alt mr-2"></i> Paraná, PR</p>
+        </div>
+      </div>
+      <div class="border-t border-gray-700 mt-8 pt-6 text-center text-gray-400">
+        <p>&copy; 2025. Conecta Bairro. Todos os direitos reservados.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Este script deve ser adicionado ao final do seu arquivo HTML, substituindo o script existente
+
+    document.addEventListener('DOMContentLoaded', function () {
+      // Esta função integra o código de login do primeiro arquivo no segundo
+
+      // Modais
+      const modalCadastroLogin = document.getElementById('modalCadastroLogin');
+      const modalNovoAnuncio = document.getElementById('modalNovoAnuncio');
+      const modalDetalhes = document.getElementById('modalDetalhes');
+      const formCadastroLogin = document.getElementById('formCadastroLogin');
+      const formNovoAnuncio = document.getElementById('formNovoAnuncio');
+
+      // Botões para abrir modais
+      const btnLogin = document.getElementById('btnLogin');
+      const btnLoginMobile = document.getElementById('btnLoginMobile');
+      const btnCadastro = document.getElementById('btnCadastro');
+      const btnCadastroMobile = document.getElementById('btnCadastroMobile');
+      const btnNovoAnuncio = document.getElementById('btnNovoAnuncio');
+
+      // Botões para fechar modais
+      const fecharCadastroLogin = document.getElementById('fecharCadastroLogin');
+      const fecharNovoAnuncio = document.getElementById('fecharNovoAnuncio');
+      const fecharModal = document.getElementById('fecharModal');
+
+      // Menu mobile
+      const menuToggle = document.getElementById('menuToggle');
+      const mobileMenu = document.getElementById('mobileMenu');
+
+      // Contêiner de anúncios
+      const anunciosContainer = document.getElementById('anunciosContainer');
+      const anunciosCount = document.getElementById('anunciosCount');
+
+      // Função para mostrar o modal com animação
+      function showModal(modal) {
+        if (!modal) return;
+        modal.classList.remove('hidden');
+        setTimeout(() => {
+          modal.classList.add('show');
+        }, 10);
+      }
+
+      // Função para esconder o modal com animação
+      function hideModal(modal) {
+        if (!modal) return;
+        modal.classList.remove('show');
+        setTimeout(() => {
+          modal.classList.add('hidden');
+        }, 300);
+      }
+
+      // Garantindo que o evento de fechar modais ao clicar fora deles funcione
+      window.addEventListener('click', function (event) {
+        if (modalCadastroLogin && event.target === modalCadastroLogin) {
+          hideModal(modalCadastroLogin);
+        }
+        if (modalNovoAnuncio && event.target === modalNovoAnuncio) {
+          hideModal(modalNovoAnuncio);
+        }
+        if (modalDetalhes && event.target === modalDetalhes) {
+          hideModal(modalDetalhes);
+        }
+      });
+
+      // Implementação do toggle de senha (corrigido)
+      const toggleSenha = document.getElementById('toggleSenha');
+      if (toggleSenha) {
+        toggleSenha.addEventListener('click', function () {
+          const senhaInput = document.getElementById('senha');
+          if (senhaInput.type === 'password') {
+            senhaInput.type = 'text';
+            toggleSenha.innerHTML = '<i class="fas fa-eye-slash"></i>';
+          } else {
+            senhaInput.type = 'password';
+            toggleSenha.innerHTML = '<i class="fas fa-eye"></i>';
+          }
+        });
+      }
+
+      // Toggle para confirmar senha (adicionado)
+      const confirmarSenhaField = document.getElementById('confirmarSenha');
+      if (confirmarSenhaField) {
+        // Adicionar botão toggle para o campo confirmar senha
+        const confirmarSenhaParent = confirmarSenhaField.parentElement;
+
+        // Verificar se o parent já tem um botão de toggle
+        if (!confirmarSenhaParent.querySelector('.toggle-senha')) {
+          confirmarSenhaParent.classList.add('relative');
+
+          const toggleConfirmarSenha = document.createElement('button');
+          toggleConfirmarSenha.type = 'button';
+          toggleConfirmarSenha.id = 'toggleConfirmarSenha';
+          toggleConfirmarSenha.className = 'toggle-senha absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500';
+          toggleConfirmarSenha.innerHTML = '<i class="fas fa-eye"></i>';
+
+          toggleConfirmarSenha.addEventListener('click', function () {
+            if (confirmarSenhaField.type === 'password') {
+              confirmarSenhaField.type = 'text';
+              this.innerHTML = '<i class="fas fa-eye-slash"></i>';
+            } else {
+              confirmarSenhaField.type = 'password';
+              this.innerHTML = '<i class="fas fa-eye"></i>';
+            }
+          });
+
+          confirmarSenhaParent.appendChild(toggleConfirmarSenha);
+        }
+      }
+
+      // Função para modificar a exibição dos campos de cadastro/login
+      function toggleCamposCadastroLogin(tipo) {
+        if (!modalCadastroLogin) return;
+
+        const nomeField = document.getElementById('nome')?.parentElement;
+        const telefoneField = document.getElementById('telefone')?.parentElement;
+        const tipoUsuarioField = document.getElementById('tipoUsuario')?.parentElement;
+        const confirmarSenhaField = document.getElementById('confirmarSenha')?.parentElement;
+        const camposExtras = document.getElementById('camposExtras');
+        const tituloModal = document.getElementById('tituloModalCadastroLogin');
+        const submitBtn = formCadastroLogin?.querySelector('button[type="submit"]');
+
+        if (tipo === 'Login') {
+          if (tituloModal) tituloModal.textContent = 'Login';
+          if (submitBtn) submitBtn.innerHTML = '<i class="fas fa-sign-in-alt mr-2"></i>Entrar';
+
+          // Esconder campos específicos de cadastro
+          if (nomeField) nomeField.style.display = 'none';
+          if (telefoneField) telefoneField.style.display = 'none';
+          if (tipoUsuarioField) tipoUsuarioField.style.display = 'none';
+          if (confirmarSenhaField) confirmarSenhaField.style.display = 'none';
+          if (camposExtras) camposExtras.style.display = 'none';
+        } else if (tipo === 'Cadastro') {
+          if (tituloModal) tituloModal.textContent = 'Cadastro';
+          if (submitBtn) submitBtn.innerHTML = '<i class="fas fa-user-plus mr-2"></i>Cadastrar';
+
+          // Mostrar campos específicos de cadastro
+          if (nomeField) nomeField.style.display = 'block';
+          if (telefoneField) telefoneField.style.display = 'block';
+          if (tipoUsuarioField) tipoUsuarioField.style.display = 'block';
+          if (confirmarSenhaField) confirmarSenhaField.style.display = 'block';
+          if (camposExtras) camposExtras.style.display = 'block';
+        }
+      }
+
+      // Event listeners para botões de login e cadastro
+      if (btnLogin) {
+        btnLogin.addEventListener('click', function () {
+          toggleCamposCadastroLogin('Login');
+          showModal(modalCadastroLogin);
+        });
+      }
+
+      if (btnLoginMobile) {
+        btnLoginMobile.addEventListener('click', function () {
+          toggleCamposCadastroLogin('Login');
+          showModal(modalCadastroLogin);
+          if (mobileMenu) mobileMenu.classList.add('hidden');
+        });
+      }
+
+      if (btnCadastro) {
+        btnCadastro.addEventListener('click', function () {
+          toggleCamposCadastroLogin('Cadastro');
+          showModal(modalCadastroLogin);
+        });
+      }
+
+      if (btnCadastroMobile) {
+        btnCadastroMobile.addEventListener('click', function () {
+          toggleCamposCadastroLogin('Cadastro');
+          showModal(modalCadastroLogin);
+          if (mobileMenu) mobileMenu.classList.add('hidden');
+        });
+      }
+
+      if (fecharCadastroLogin) {
+        fecharCadastroLogin.addEventListener('click', function () {
+          hideModal(modalCadastroLogin);
+        });
+      }
+
+      if (btnNovoAnuncio) {
+        btnNovoAnuncio.addEventListener('click', function () {
+          // Verificar se usuário está logado
+          const usuarioAtual = JSON.parse(localStorage.getItem('usuarioAtual') || '{}');
+          if (!usuarioAtual.email) {
+            alert('Você precisa estar logado para criar um anúncio!');
+            showModal(modalCadastroLogin);
+            toggleCamposCadastroLogin('Login'); // Mostrar o formulário de login
+            return;
+          }
+
+          // Se está logado, preencher automaticamente o campo de contato
+          const contatoField = document.getElementById('contato');
+          if (contatoField && usuarioAtual.telefone) {
+            contatoField.value = usuarioAtual.telefone;
+          }
+
+          showModal(modalNovoAnuncio);
+        });
+      }
+
+      // Implementar a funcionalidade de login/cadastro
+      if (formCadastroLogin) {
+        formCadastroLogin.addEventListener('submit', function (e) {
+          e.preventDefault();
+
+          const email = document.getElementById('email')?.value;
+          const senha = document.getElementById('senha')?.value;
+          const isCadastro = document.getElementById('tituloModalCadastroLogin')?.textContent === 'Cadastro';
+
+          if (!email || !senha) {
+            alert('Por favor, preencha todos os campos obrigatórios!');
+            return;
+          }
+
+          // Obter dados dos usuários armazenados
+          const usuarios = JSON.parse(localStorage.getItem('usuarios') || '[]');
+
+          if (isCadastro) {
+            // Lógica de cadastro
+            const nome = document.getElementById('nome')?.value;
+            const telefone = document.getElementById('telefone')?.value;
+            const tipoUsuario = document.getElementById('tipoUsuario')?.value;
+            const confirmarSenha = document.getElementById('confirmarSenha')?.value;
+
+            if (!nome || !telefone || !tipoUsuario || !confirmarSenha) {
+              alert('Por favor, preencha todos os campos obrigatórios!');
+              return;
+            }
+
+            // Validação básica
+            if (senha !== confirmarSenha) {
+              alert('As senhas não conferem!');
+              return;
+            }
+
+            // Verificar se o email já está cadastrado
+            const emailExistente = usuarios.some(user => user.email === email);
+            if (emailExistente) {
+              alert('Este email já está cadastrado. Por favor, use outro email ou faça login.');
+              return;
+            }
+
+            // Criar novo usuário
+            const novoUsuario = {
+              nome,
+              email,
+              telefone,
+              tipoUsuario,
+              senha // Em uma aplicação real, nunca armazene senha em texto simples
+            };
+
+            // Adicionar à lista de usuários
+            usuarios.push(novoUsuario);
+            localStorage.setItem('usuarios', JSON.stringify(usuarios));
+
+            // Definir o usuário atual
+            localStorage.setItem('usuarioAtual', JSON.stringify(novoUsuario));
+
+            alert('Cadastro realizado com sucesso!');
+
+            // Atualizar a interface para mostrar o usuário logado
+            atualizarInterfaceUsuarioLogado(nome);
+          } else {
+            // Lógica de login (melhorada)
+            const usuarioEncontrado = usuarios.find(user => user.email === email && user.senha === senha);
+
+            if (usuarioEncontrado) {
+              // Login bem-sucedido
+              localStorage.setItem('usuarioAtual', JSON.stringify(usuarioEncontrado));
+              alert('Login realizado com sucesso!');
+
+              // Atualizar a interface para mostrar o usuário logado
+              atualizarInterfaceUsuarioLogado(usuarioEncontrado.nome);
+            } else {
+              alert('Email ou senha incorretos!');
+              return; // Sair da função sem fechar o modal
+            }
+          }
+
+          // Fechar o modal após o login/cadastro bem-sucedido
+          hideModal(modalCadastroLogin);
+        });
+      }
+
+      // Função para atualizar a interface quando o usuário está logado
+      function atualizarInterfaceUsuarioLogado(nome) {
+        const headerUsuario = document.getElementById('headerUsuario');
+        const headerUsuarioMobile = document.getElementById('headerUsuarioMobile');
+        const btnLogin = document.getElementById('btnLogin');
+        const btnLoginMobile = document.getElementById('btnLoginMobile');
+        const btnCadastro = document.getElementById('btnCadastro');
+        const btnCadastroMobile = document.getElementById('btnCadastroMobile');
+        const btnLogout = document.getElementById('btnLogout');
+        const btnLogoutMobile = document.getElementById('btnLogoutMobile');
+        const btnNovoAnuncio = document.getElementById('btnNovoAnuncio');
+
+        // Atualizar o texto de saudação
+        if (headerUsuario) {
+          headerUsuario.textContent = `Olá, ${nome}`;
+        }
+        if (headerUsuarioMobile) {
+          headerUsuarioMobile.textContent = `Olá, ${nome}`;
+        }
+
+        // Ocultar botões de login/cadastro
+        if (btnLogin) btnLogin.classList.add('hidden');
+        if (btnLoginMobile) btnLoginMobile.classList.add('hidden');
+        if (btnCadastro) btnCadastro.classList.add('hidden');
+        if (btnCadastroMobile) btnCadastroMobile.classList.add('hidden');
+
+        // Mostrar botões de logout e novo anúncio
+        if (btnLogout) btnLogout.classList.remove('hidden');
+        if (btnLogoutMobile) btnLogoutMobile.classList.remove('hidden');
+        if (btnNovoAnuncio) btnNovoAnuncio.classList.remove('hidden');
+      }
+
+      // Configurar o logout
+      const btnLogout = document.getElementById('btnLogout');
+      const btnLogoutMobile = document.getElementById('btnLogoutMobile');
+
+      function handleLogout() {
+        const headerUsuario = document.getElementById('headerUsuario');
+        const headerUsuarioMobile = document.getElementById('headerUsuarioMobile');
+        const btnLogin = document.getElementById('btnLogin');
+        const btnLoginMobile = document.getElementById('btnLoginMobile');
+        const btnCadastro = document.getElementById('btnCadastro');
+        const btnCadastroMobile = document.getElementById('btnCadastroMobile');
+        const btnLogout = document.getElementById('btnLogout');
+        const btnLogoutMobile = document.getElementById('btnLogoutMobile');
+        const btnNovoAnuncio = document.getElementById('btnNovoAnuncio');
+
+        // Limpar informações de usuário na UI
+        if (headerUsuario) headerUsuario.textContent = '';
+        if (headerUsuarioMobile) headerUsuarioMobile.textContent = '';
+
+        // Mostrar botões de login/cadastro
+        if (btnLogin) btnLogin.classList.remove('hidden');
+        if (btnLoginMobile) btnLoginMobile.classList.remove('hidden');
+        if (btnCadastro) btnCadastro.classList.remove('hidden');
+        if (btnCadastroMobile) btnCadastroMobile.classList.remove('hidden');
+
+        // Ocultar botões de logout e novo anúncio
+        if (btnLogout) btnLogout.classList.add('hidden');
+        if (btnLogoutMobile) btnLogoutMobile.classList.add('hidden');
+        if (btnNovoAnuncio) btnNovoAnuncio.classList.add('hidden');
+
+        // Remover dados do usuário atual do localStorage
+        localStorage.removeItem('usuarioAtual');
+
+        // Mensagem de confirmação
+        alert('Logout realizado com sucesso!');
+      }
+
+      // Função modificada para verificar usuário logado
+      function verificarUsuarioLogado() {
+        const usuarioAtual = JSON.parse(localStorage.getItem('usuarioAtual') || '{}');
+        if (usuarioAtual.nome) {
+          atualizarInterfaceUsuarioLogado(usuarioAtual.nome);
+        }
+      }
+
+      if (btnLogout) {
+        btnLogout.addEventListener('click', handleLogout);
+      }
+
+      if (btnLogoutMobile) {
+        btnLogoutMobile.addEventListener('click', function () {
+          handleLogout();
+          if (mobileMenu) mobileMenu.classList.add('hidden');
+        });
+      }
+
+      // IMPLEMENTAÇÃO DOS ANÚNCIOS (NOVA FUNCIONALIDADE)
+
+      // Função para gerar ID único para anúncios
+      function gerarId() {
+        return Date.now().toString(36) + Math.random().toString(36).substr(2);
+      }
+
+      // Função para salvar anúncio no localStorage
+      function salvarAnuncio(anuncio) {
+        // Obter anúncios existentes
+        const anuncios = JSON.parse(localStorage.getItem('anuncios') || '[]');
+
+        // Adicionar novo anúncio
+        anuncios.push(anuncio);
+
+        // Salvar no localStorage
+        localStorage.setItem('anuncios', JSON.stringify(anuncios));
+      }
+
+      // Função para obter anúncios do localStorage
+      function obterAnuncios() {
+        return JSON.parse(localStorage.getItem('anuncios') || '[]');
+      }
+
+      // Função para criar cartão de anúncio no DOM
+      function criarCartaoAnuncio(anuncio) {
+        const cartao = document.createElement('div');
+        cartao.className = 'bg-white rounded-lg shadow-lg overflow-hidden card-hover fade-in';
+        cartao.dataset.id = anuncio.id;
+
+        // Imagem do anúncio (usando a primeira imagem do anúncio ou placeholder)
+        const imagemUrl = anuncio.imagens && anuncio.imagens.length > 0
+          ? anuncio.imagens[0]
+          : 'https://via.placeholder.com/300x200?text=Sem+Imagem';
+
+        cartao.innerHTML = `
+    <div class="relative h-48 overflow-hidden">
+      <img src="${imagemUrl}" alt="${anuncio.titulo}" class="w-full h-full object-cover">
+      <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-3">
+        <div class="flex justify-between items-center">
+          <span class="badge bg-blue-100 text-blue-700">${anuncio.bairro}</span>
+          <span class="badge bg-green-100 text-green-700">${anuncio.categoria}</span>
+        </div>
+      </div>
+    </div>
+    <div class="p-4">
+      <h3 class="text-lg font-semibold text-gray-800 mb-2">${anuncio.titulo}</h3>
+      <p class="text-gray-600 text-sm line-clamp-2 mb-3">${anuncio.descricao}</p>
+      <button class="btn-ver-detalhes w-full bg-blue-600 text-white px-3 py-2 rounded-lg hover:bg-blue-700 transition shadow">
+        <i class="fas fa-eye mr-2"></i>Ver detalhes
+      </button>
+    </div>
+  `;
+
+        // Adicionar event listener para ver detalhes
+        const btnDetalhes = cartao.querySelector('.btn-ver-detalhes');
+        btnDetalhes.addEventListener('click', () => mostrarDetalhesAnuncio(anuncio));
+
+        return cartao;
+      }
+
+      // Função para mostrar detalhes do anúncio
+      function mostrarDetalhesAnuncio(anuncio) {
+        // Preencher o modal com os dados do anúncio
+        document.getElementById('modalTitulo').textContent = anuncio.titulo;
+        document.getElementById('modalBairro').textContent = anuncio.bairro;
+        document.getElementById('modalCategoria').textContent = anuncio.categoria;
+        document.getElementById('modalDescricao').textContent = anuncio.descricao;
+        document.getElementById('modalContato').querySelector('span').textContent = anuncio.contato;
+
+        // Limpar imagens existentes
+        const modalImagens = document.getElementById('modalImagens');
+        modalImagens.innerHTML = '';
+        modalImagens.style.transform = 'translateX(0)'; // Resetar posição do slider
+
+        // Adicionar imagens do anúncio ou placeholder
+        if (anuncio.imagens && anuncio.imagens.length > 0) {
+          anuncio.imagens.forEach(imagem => {
+            const img = document.createElement('div');
+            img.className = 'min-w-full';
+            img.innerHTML = `<img src="${imagem}" alt="${anuncio.titulo}" class="w-full h-64 object-cover">`;
+            modalImagens.appendChild(img);
+          });
+
+          // Mostrar botões de navegação apenas se houver mais de uma imagem
+          document.getElementById('prevImage').style.display = anuncio.imagens.length > 1 ? 'flex' : 'none';
+          document.getElementById('nextImage').style.display = anuncio.imagens.length > 1 ? 'flex' : 'none';
+        } else {
+          const img = document.createElement('div');
+          img.className = 'min-w-full';
+          img.innerHTML = `<img src="https://via.placeholder.com/800x400?text=Sem+Imagem" alt="${anuncio.titulo}" class="w-full h-64 object-cover">`;
+          modalImagens.appendChild(img);
+
+          // Esconder botões de navegação
+          document.getElementById('prevImage').style.display = 'none';
+          document.getElementById('nextImage').style.display = 'none';
+        }
+
+        // Mostrar botões de edição/exclusão se o usuário for o dono
+        const usuarioAtual = JSON.parse(localStorage.getItem('usuarioAtual') || '{}');
+        const btnEditarAnuncio = document.getElementById('btnEditarAnuncio');
+        const btnExcluirAnuncioDetalhes = document.getElementById('btnExcluirAnuncioDetalhes');
+
+        if (usuarioAtual.email === anuncio.emailCriador) {
+          btnEditarAnuncio.classList.remove('hidden');
+          btnExcluirAnuncioDetalhes.classList.remove('hidden');
+
+          // Event listener para excluir anúncio
+          btnExcluirAnuncioDetalhes.onclick = () => {
+            if (confirm('Tem certeza que deseja excluir este anúncio?')) {
+              excluirAnuncio(anuncio.id);
+              hideModal(modalDetalhes);
+            }
+          };
+
+          // Implementar edição
+          // Event listener para o botão Editar no modal de detalhes
+          btnEditarAnuncio.onclick = () => {
+            // Fechar modal de detalhes
+            hideModal(modalDetalhes);
+
+            // Preencher formulário para edição
+            document.getElementById('titulo').value = anuncio.titulo;
+            document.getElementById('descricao').value = anuncio.descricao;
+            document.getElementById('bairro').value = anuncio.bairro;
+            document.getElementById('categoria').value = anuncio.categoria;
+            document.getElementById('contato').value = anuncio.contato;
+
+            // Preencher o preview de imagens
+            if (previewImagens) {
+              previewImagens.innerHTML = ''; // Limpar qualquer preview existente
+
+              // Inicializar o array de imagens com as imagens existentes do anúncio
+              imagensParaUpload = anuncio.imagens ? [...anuncio.imagens] : [];
+
+              // Criar previews para cada imagem existente
+              imagensParaUpload.forEach(imagem => {
+                const preview = document.createElement('div');
+                preview.className = 'relative bg-gray-100 rounded-lg overflow-hidden h-24';
+                preview.innerHTML = `
+        <img src="${imagem}" alt="Preview" class="w-full h-full object-cover">
+        <button type="button" class="btn-remover-imagem absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center shadow hover:bg-red-600">
+          <i class="fas fa-times"></i>
+        </button>
+      `;
+
+                // Adicionar botão para remover imagem
+                const btnRemover = preview.querySelector('.btn-remover-imagem');
+                btnRemover.addEventListener('click', function () {
+                  const index = imagensParaUpload.indexOf(imagem);
+                  if (index > -1) {
+                    imagensParaUpload.splice(index, 1);
+                    preview.remove();
+                  }
+                });
+
+                previewImagens.appendChild(preview);
+              });
+            }
+
+            // Modificar o formulário para edição
+            document.getElementById('tituloModalNovoAnuncio').textContent = 'Editar Anúncio';
+
+            // Botão de submissão alterado para atualizar
+            const btnSubmit = formNovoAnuncio.querySelector('button[type="submit"]');
+            btnSubmit.innerHTML = '<i class="fas fa-save mr-2"></i>Atualizar Anúncio';
+
+            // Armazenar o ID do anúncio sendo editado
+            formNovoAnuncio.dataset.editandoId = anuncio.id;
+
+            // Abrir modal de edição
+            showModal(modalNovoAnuncio);
+          };
+        } else {
+          btnEditarAnuncio.classList.add('hidden');
+          btnExcluirAnuncioDetalhes.classList.add('hidden');
+        }
+
+        // Mostrar o modal
+        showModal(modalDetalhes);
+      }
+
+      // Função para excluir anúncio
+      function excluirAnuncio(id) {
+        let anuncios = obterAnuncios();
+        anuncios = anuncios.filter(anuncio => anuncio.id !== id);
+        localStorage.setItem('anuncios', JSON.stringify(anuncios));
+
+        // Atualizar a exibição
+        exibirAnuncios();
+      }
+
+      // Função para exibir anúncios na página
+      function exibirAnuncios() {
+        // Limpar container
+        anunciosContainer.innerHTML = '';
+
+        // Obter anúncios
+        const anuncios = obterAnuncios();
+
+        // Atualizar contador
+        if (anunciosCount) {
+          anunciosCount.textContent = `${anuncios.length} anúncios`;
+        }
+
+        // Se não houver anúncios, mostrar mensagem
+        if (anuncios.length === 0) {
+          const mensagem = document.createElement('div');
+          mensagem.className = 'col-span-full text-center py-8 text-gray-500';
+          mensagem.innerHTML = `
+        <i class="fas fa-search text-4xl mb-3"></i>
+        <p class="text-lg">Nenhum anúncio encontrado</p>
+        <p>Seja o primeiro a publicar um anúncio na plataforma!</p>
+      `;
+          anunciosContainer.appendChild(mensagem);
+          return;
+        }
+
+        // Adicionar cada anúncio ao container
+        anuncios.forEach(anuncio => {
+          const cartao = criarCartaoAnuncio(anuncio);
+          anunciosContainer.appendChild(cartao);
+        });
+      }
+
+      // Adicionar funcionalidade para upload de imagens
+      const inputImagens = document.getElementById('imagens');
+      const previewImagens = document.getElementById('previewImagens');
+      let imagensParaUpload = [];
+
+      // Verificar se os elementos existem
+      if (inputImagens && previewImagens) {
+        // Inicializar o container de preview
+        if (!previewImagens.classList.contains('grid')) {
+          previewImagens.className = 'grid grid-cols-3 gap-2 mt-2';
+        }
+        // Event listener para seleção de imagens
+        inputImagens.addEventListener('change', function (e) {
+          const files = Array.from(e.target.files);
+
+          // Limitar o número de imagens (máximo 3)
+          if (files.length + imagensParaUpload.length > 3) {
+            alert('Você pode adicionar no máximo 3 imagens por anúncio.');
+            return;
+          }
+
+          // Processar cada arquivo
+          files.forEach(file => {
+            // Verificar se é uma imagem
+            if (!file.type.match('image.*')) {
+              alert('Por favor, selecione apenas arquivos de imagem.');
+              return;
+            }
+
+            // Verificar tamanho (máximo 1MB)
+            if (file.size > 1024 * 1024) {
+              alert('Cada imagem deve ter no máximo 1MB.');
+              return;
+            }
+
+            // Usar FileReader para converter a imagem em base64
+            const reader = new FileReader();
+            reader.onload = function (e) {
+              // Adicionar ao array de imagens
+              imagensParaUpload.push(e.target.result);
+
+              // Criar preview
+              const preview = document.createElement('div');
+              preview.className = 'relative bg-gray-100 rounded-lg overflow-hidden h-24';
+              preview.innerHTML = `
+          <img src="${e.target.result}" alt="Preview" class="w-full h-full object-cover">
+          <button type="button" class="btn-remover-imagem absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center shadow hover:bg-red-600">
+            <i class="fas fa-times"></i>
+          </button>
+        `;
+
+              // Adicionar botão para remover imagem
+              const btnRemover = preview.querySelector('.btn-remover-imagem');
+              btnRemover.addEventListener('click', function () {
+                const index = imagensParaUpload.indexOf(e.target.result);
+                if (index > -1) {
+                  imagensParaUpload.splice(index, 1);
+                  preview.remove();
+                }
+              });
+
+              previewImagens.appendChild(preview);
+            };
+
+            reader.readAsDataURL(file);
+          });
+        });
+      }
+
+      // Implementar a funcionalidade de criar novo anúncio
+      if (formNovoAnuncio) {
+        formNovoAnuncio.addEventListener('submit', function (e) {
+          e.preventDefault();
+
+          // Verificar se usuário está logado com a nova estrutura
+          const usuarioAtual = JSON.parse(localStorage.getItem('usuarioAtual') || '{}');
+          if (!usuarioAtual.email) {
+            alert('Você precisa estar logado para criar um anúncio!');
+            hideModal(modalNovoAnuncio);
+            showModal(modalCadastroLogin);
+            toggleCamposCadastroLogin('Login');
+            return;
+          }
+
+          // Obter dados do formulário
+          const titulo = document.getElementById('titulo').value;
+          const descricao = document.getElementById('descricao').value;
+          const bairro = document.getElementById('bairro').value;
+          const categoria = document.getElementById('categoria').value;
+          const contato = document.getElementById('contato').value;
+
+          // Validação básica
+          if (!titulo || !descricao || !bairro || !categoria || !contato) {
+            alert('Por favor, preencha todos os campos obrigatórios!');
+            return;
+          }
+
+          // Verificar se está editando ou criando novo
+          const editandoId = formNovoAnuncio.dataset.editandoId;
+
+          if (editandoId) {
+            // Modo de edição - Atualizar anúncio existente
+            const anuncios = obterAnuncios();
+            const index = anuncios.findIndex(a => a.id === editandoId);
+
+            if (index !== -1) {
+              // Manter dados originais que não devem mudar
+              const anuncioOriginal = anuncios[index];
+
+              // Atualizar o anúncio
+              anuncios[index] = {
+                ...anuncioOriginal, // Manter ID, data de criação e criador originais
+                titulo,
+                descricao,
+                bairro,
+                categoria,
+                contato,
+                imagens: imagensParaUpload, // Atualizar com as imagens novas/editadas
+                dataAtualizacao: new Date().toISOString() // Adicionar data de atualização
+              };
+
+              // Salvar no localStorage
+              localStorage.setItem('anuncios', JSON.stringify(anuncios));
+
+              alert('Anúncio atualizado com sucesso!');
+            } else {
+              alert('Erro: Anúncio não encontrado!');
+            }
+
+            // Limpar flag de edição
+            delete formNovoAnuncio.dataset.editandoId;
+
+            // Restaurar o título e botão para novo anúncio
+            document.getElementById('tituloModalNovoAnuncio').textContent = 'Novo Anúncio';
+            const btnSubmit = formNovoAnuncio.querySelector('button[type="submit"]');
+            btnSubmit.innerHTML = '<i class="fas fa-plus mr-2"></i>Publicar Anúncio';
+
+          } else {
+            // Modo de criação - Criar novo anúncio
+            const novoAnuncio = {
+              id: gerarId(),
+              titulo,
+              descricao,
+              bairro,
+              categoria,
+              contato,
+              emailCriador: usuarioAtual.email,
+              nomeCriador: usuarioAtual.nome,
+              dataCriacao: new Date().toISOString(),
+              imagens: imagensParaUpload // Incluir imagens em base64
+            };
+
+            // Salvar anúncio
+            salvarAnuncio(novoAnuncio);
+
+            alert('Anúncio criado com sucesso!');
+          }
+
+          // Atualizar a exibição
+          exibirAnuncios();
+
+          // Limpar o formulário e as imagens
+          formNovoAnuncio.reset();
+          imagensParaUpload = [];
+          if (previewImagens) {
+            previewImagens.innerHTML = '';
+          }
+
+          // Fechar o modal
+          hideModal(modalNovoAnuncio);
+        });
+      }
+
+      // Implementar filtros
+      const btnFiltrar = document.getElementById('btnFiltrar');
+      if (btnFiltrar) {
+        btnFiltrar.addEventListener('click', function () {
+          const bairroFiltro = document.getElementById('filtroBairro').value.toLowerCase();
+          const categoriaFiltro = document.getElementById('filtroCategoria').value.toLowerCase();
+          const buscaFiltro = document.getElementById('filtroBusca').value.toLowerCase();
+
+          // Obter todos os anúncios
+          const anuncios = obterAnuncios();
+
+          // Filtrar anúncios
+          const anunciosFiltrados = anuncios.filter(anuncio => {
+            const bairroMatch = !bairroFiltro || anuncio.bairro.toLowerCase().includes(bairroFiltro);
+            const categoriaMatch = !categoriaFiltro || anuncio.categoria.toLowerCase().includes(categoriaFiltro);
+            const buscaMatch = !buscaFiltro ||
+              anuncio.titulo.toLowerCase().includes(buscaFiltro) ||
+              anuncio.descricao.toLowerCase().includes(buscaFiltro);
+
+            return bairroMatch && categoriaMatch && buscaMatch;
+          });
+
+          // Limpar container
+          anunciosContainer.innerHTML = '';
+
+          // Atualizar contador
+          if (anunciosCount) {
+            anunciosCount.textContent = `${anunciosFiltrados.length} anúncios`;
+          }
+
+          // Se não houver anúncios, mostrar mensagem
+          if (anunciosFiltrados.length === 0) {
+            const mensagem = document.createElement('div');
+            mensagem.className = 'col-span-full text-center py-8 text-gray-500';
+            mensagem.innerHTML = `
+          <i class="fas fa-filter text-4xl mb-3"></i>
+          <p class="text-lg">Nenhum anúncio encontrado com esses filtros</p>
+          <p>Tente outros critérios de busca.</p>
+        `;
+            anunciosContainer.appendChild(mensagem);
+            return;
+          }
+
+          // Adicionar cada anúncio ao container
+          anunciosFiltrados.forEach(anuncio => {
+            const cartao = criarCartaoAnuncio(anuncio);
+            anunciosContainer.appendChild(cartao);
+          });
+        });
+      }
+
+      // Carregar as categorias nos filtros
+      function carregarCategorias() {
+        const categorias = new Set();
+        const bairros = new Set();
+
+        // Obter categorias e bairros dos anúncios existentes
+        const anuncios = obterAnuncios();
+        anuncios.forEach(anuncio => {
+          categorias.add(anuncio.categoria);
+          bairros.add(anuncio.bairro);
+        });
+
+        // Adicionar categorias ao filtro
+        const filtroCategoria = document.getElementById('filtroCategoria');
+        if (filtroCategoria) {
+          filtroCategoria.innerHTML = '<option value="">Todas as Categorias</option>';
+          categorias.forEach(categoria => {
+            const option = document.createElement('option');
+            option.value = categoria;
+            option.textContent = categoria;
+            filtroCategoria.appendChild(option);
+          });
+        }
+
+        // Adicionar bairros ao filtro
+        const filtroBairro = document.getElementById('filtroBairro');
+        if (filtroBairro) {
+          filtroBairro.innerHTML = '<option value="">Todos os Bairros</option>';
+          bairros.forEach(bairro => {
+            const option = document.createElement('option');
+            option.value = bairro;
+            option.textContent = bairro;
+            filtroBairro.appendChild(option);
+          });
+        }
+      }
+
+      // Toggle menu mobile
+      if (menuToggle && mobileMenu) {
+        menuToggle.addEventListener('click', function () {
+          mobileMenu.classList.toggle('hidden');
+        });
+      }
+
+      // Event listener para cards de categoria
+      const categoryCards = document.querySelectorAll('.category-card');
+      if (categoryCards.length > 0) {
+        categoryCards.forEach(card => {
+          card.addEventListener('click', function () {
+            const categoria = this.dataset.category;
+            document.getElementById('filtroCategoria').value = categoria;
+            btnFiltrar.click();
+          });
+        });
+      }
+
+      // Botões de navegação do slider de imagens
+      const prevImage = document.getElementById('prevImage');
+      const nextImage = document.getElementById('nextImage');
+
+      if (prevImage && nextImage) {
+        let currentImageIndex = 0;
+
+        prevImage.addEventListener('click', function () {
+          const modalImagens = document.getElementById('modalImagens');
+          const totalImagens = modalImagens.children.length;
+
+          if (totalImagens <= 1) return;
+
+          currentImageIndex = (currentImageIndex - 1 + totalImagens) % totalImagens;
+          modalImagens.style.transform = `translateX(-${currentImageIndex * 100}%)`;
+        });
+
+        nextImage.addEventListener('click', function () {
+          const modalImagens = document.getElementById('modalImagens');
+          const totalImagens = modalImagens.children.length;
+
+          if (totalImagens <= 1) return;
+
+          currentImageIndex = (currentImageIndex + 1) % totalImagens;
+          modalImagens.style.transform = `translateX(-${currentImageIndex * 100}%)`;
+        });
+      }
+
+      // Garantindo que os botões para fechar modais funcionem
+      // Limpar o formulário e resetar o estado quando o modal for fechado
+      if (fecharNovoAnuncio) {
+        fecharNovoAnuncio.addEventListener('click', function () {
+          // Limpar ID de edição se existir
+          if (formNovoAnuncio.dataset.editandoId) {
+            delete formNovoAnuncio.dataset.editandoId;
+
+            // Restaurar o formulário para estado de novo anúncio
+            document.getElementById('tituloModalNovoAnuncio').textContent = 'Novo Anúncio';
+            const btnSubmit = formNovoAnuncio.querySelector('button[type="submit"]');
+            btnSubmit.innerHTML = '<i class="fas fa-plus mr-2"></i>Publicar Anúncio';
+          }
+
+          // Limpar imagens
+          imagensParaUpload = [];
+          if (previewImagens) {
+            previewImagens.innerHTML = '';
+          }
+
+          // Limpar o formulário
+          formNovoAnuncio.reset();
+
+          // Fechar modal
+          hideModal(modalNovoAnuncio);
+        });
+
+        // Fechar modal clicando no fundo também deve limpar o estado
+        modalNovoAnuncio.addEventListener('click', function (event) {
+          if (event.target === modalNovoAnuncio) {
+            fecharNovoAnuncio.click(); // Reuse the logic
+          }
+        });
+      }
+
+      if (fecharModal) {
+        fecharModal.addEventListener('click', function () {
+          hideModal(modalDetalhes);
+        });
+      }
+
+      // Verificar se há um usuário armazenado no localStorage e atualizar a interface
+      function verificarUsuarioLogado() {
+        const usuario = JSON.parse(localStorage.getItem('usuario') || '{}');
+        if (usuario.nome) {
+          atualizarInterfaceUsuarioLogado(usuario.nome);
+        }
+      }
+
+      // Carregar anúncios e categorias na inicialização
+      verificarUsuarioLogado();
+      exibirAnuncios();
+      carregarCategorias();
+
+      // Inicializar tooltips
+      const tooltips = document.querySelectorAll('[data-tooltip]');
+      if (tooltips.length > 0) {
+        tooltips.forEach(tooltip => {
+          tooltip.addEventListener('mouseenter', function () {
+            const tooltipText = this.dataset.tooltip;
+            const tooltipElement = document.createElement('div');
+            tooltipElement.className = 'tooltip absolute bg-gray-800 text-white text-xs rounded py-1 px-2 z-50';
+            tooltipElement.textContent = tooltipText;
+
+            // Posicionar o tooltip
+            this.style.position = 'relative';
+            this.appendChild(tooltipElement);
+
+            // Posicionar abaixo do elemento
+            tooltipElement.style.bottom = '-25px';
+            tooltipElement.style.left = '50%';
+            tooltipElement.style.transform = 'translateX(-50%)';
+          });
+
+          tooltip.addEventListener('mouseleave', function () {
+            const tooltipElement = this.querySelector('.tooltip');
+            if (tooltipElement) {
+              tooltipElement.remove();
+            }
+          });
+        });
+      }
+
+      // Adicionar handler para o botão de limpar filtros
+      const btnLimparFiltros = document.getElementById('btnLimparFiltros');
+      if (btnLimparFiltros) {
+        btnLimparFiltros.addEventListener('click', function () {
+          document.getElementById('filtroBairro').value = '';
+          document.getElementById('filtroCategoria').value = '';
+          document.getElementById('filtroBusca').value = '';
+
+          // Recarregar todos os anúncios
+          exibirAnuncios();
+        });
+      }
+
+      // Implementar ordenação de anúncios
+      const ordenarAnuncios = document.getElementById('ordenarAnuncios');
+      if (ordenarAnuncios) {
+        ordenarAnuncios.addEventListener('change', function () {
+          const opcao = this.value;
+          let anuncios = obterAnuncios();
+
+          switch (opcao) {
+            case 'recentes':
+              anuncios.sort((a, b) => new Date(b.dataCriacao) - new Date(a.dataCriacao));
+              break;
+            case 'antigos':
+              anuncios.sort((a, b) => new Date(a.dataCriacao) - new Date(b.dataCriacao));
+              break;
+            case 'alfabetica':
+              anuncios.sort((a, b) => a.titulo.localeCompare(b.titulo));
+              break;
+          }
+
+          // Limpar container
+          anunciosContainer.innerHTML = '';
+
+          // Adicionar cada anúncio ao container
+          anuncios.forEach(anuncio => {
+            const cartao = criarCartaoAnuncio(anuncio);
+            anunciosContainer.appendChild(cartao);
+          });
+        });
+      }
+
+      // Adicionar evento para botão de compartilhar
+      const btnCompartilhar = document.getElementById('btnCompartilhar');
+      if (btnCompartilhar) {
+        btnCompartilhar.addEventListener('click', function () {
+          const titulo = document.getElementById('modalTitulo').textContent;
+
+          // Verificar se a API de compartilhamento está disponível
+          if (navigator.share) {
+            navigator.share({
+              title: titulo,
+              text: `Confira este anúncio: ${titulo}`,
+              url: window.location.href
+            })
+              .catch(error => {
+                console.error('Erro ao compartilhar:', error);
+                alert('Não foi possível compartilhar este anúncio.');
+              });
+          } else {
+            // Fallback para browsers que não suportam a API
+            alert(`Link copiado: ${window.location.href}`);
+
+            // Copiar para a área de transferência
+            const tempInput = document.createElement('input');
+            tempInput.value = window.location.href;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempInput);
+          }
+        });
+      }
+
+      // Implementar scroll suave para ancoras
+      document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+          e.preventDefault();
+
+          const targetId = this.getAttribute('href');
+          const targetElement = document.querySelector(targetId);
+
+          if (targetElement) {
+            window.scrollTo({
+              top: targetElement.offsetTop - 80, // Ajuste para o header fixo
+              behavior: 'smooth'
+            });
+
+            // Fechar menu mobile se estiver aberto
+            if (mobileMenu && !mobileMenu.classList.contains('hidden')) {
+              mobileMenu.classList.add('hidden');
+            }
+          }
+        });
+      });
+
+      // Adicionar animação ao scroll
+      function animarElementosAoScroll() {
+        const elementos = document.querySelectorAll('.fade-in');
+
+        elementos.forEach(elemento => {
+          const posicaoElemento = elemento.getBoundingClientRect().top;
+          const alturaTela = window.innerHeight;
+
+          if (posicaoElemento < alturaTela - 100) {
+            elemento.classList.add('visible');
+          }
+        });
+      }
+
+      // Executar no carregamento inicial e ao scroll
+      animarElementosAoScroll();
+      window.addEventListener('scroll', animarElementosAoScroll);
+
+      // Adicionar máscara ao campo de telefone
+      const telefoneInput = document.getElementById('telefone');
+      if (telefoneInput) {
+        telefoneInput.addEventListener('input', function (e) {
+          let valor = e.target.value.replace(/\D/g, '');
+
+          if (valor.length > 11) {
+            valor = valor.slice(0, 11);
+          }
+
+          if (valor.length > 7) {
+            valor = valor.replace(/^(\d{2})(\d{5})(\d{4}).*/, '($1) $2-$3');
+          } else if (valor.length > 2) {
+            valor = valor.replace(/^(\d{2})(\d{0,5})/, '($1) $2');
+          }
+
+          e.target.value = valor;
+        });
+      }
+
+      // Inicializar os elementos de contato nos detalhes do anúncio
+      const contatoDetalhe = document.getElementById('modalContato');
+      if (contatoDetalhe) {
+        const btnCopiarContato = document.getElementById('btnCopiarContato');
+        if (btnCopiarContato) {
+          btnCopiarContato.addEventListener('click', function () {
+            const contato = contatoDetalhe.querySelector('span').textContent;
+
+            // Copiar para a área de transferência
+            const tempInput = document.createElement('input');
+            tempInput.value = contato;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempInput);
+
+            // Feedback visual
+            this.textContent = 'Copiado!';
+            setTimeout(() => {
+              this.innerHTML = '<i class="fas fa-copy mr-1"></i> Copiar';
+            }, 2000);
+          });
+        }
+      }
+
+      // Inicializar efeitos visuais nos cards de anúncios
+      function inicializarEfeitosVisuais() {
+        const cards = document.querySelectorAll('.card-hover');
+
+        cards.forEach(card => {
+          card.addEventListener('mouseenter', function () {
+            this.classList.add('scale-105');
+            this.classList.add('shadow-xl');
+          });
+
+          card.addEventListener('mouseleave', function () {
+            this.classList.remove('scale-105');
+            this.classList.remove('shadow-xl');
+          });
+        });
+      }
+
+      // Executar após carregar anúncios
+      inicializarEfeitosVisuais();
+
+      // Verificar suporte ao localStorage
+      function verificarSuporte() {
+        try {
+          localStorage.setItem('teste', 'teste');
+          localStorage.removeItem('teste');
+          return true;
+        } catch (e) {
+          alert('Seu navegador não suporta armazenamento local. Algumas funcionalidades podem não funcionar corretamente.');
+          return false;
+        }
+      }
+
+      // Verificar suporte ao iniciar
+      verificarSuporte();
+    });
+  </script>
+</body>
+
+</html>
